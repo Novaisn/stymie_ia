@@ -1,12 +1,10 @@
 from typing import Optional
 from games.state import State
-
 from games.Stymie.action import StymieAction
 from games.Stymie.result import StymieResult
-
 from games.Stymie.action import StymiePlacementAction
-
 from games.Stymie.action import StymieInPlayAction
+from games.Stymie.action import StymieAddAction
 
 
 class StymieState(State):
@@ -171,6 +169,9 @@ class StymieState(State):
         return True
 
     def validate_inplay_action(self, action: StymieInPlayAction) -> bool:
+        if isinstance(action,StymieAddAction):
+            #vou aqui
+            pass
         return False
 
     def validate_action(self, action: StymieAction) -> bool:
