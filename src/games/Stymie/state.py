@@ -207,7 +207,6 @@ class StymieState(State):
         rowini = action.get_rowIni()
         colfim = action.get_colFim()
         rowfim = action.get_rowFim()
-        print("ACTING PLAYER", self.__acting_player)
         if self.__grid[rowfim][colfim] != StymieState.EMPTY_CELL:
             return False
         if self.__grid[rowini][colini] != self.__acting_player:
@@ -218,7 +217,6 @@ class StymieState(State):
         if isinstance(action, StymieAddAction):
             return self.validate_inplay_place_action(action)
         elif isinstance(action, StymieMoveAction):
-            print("OIOIOPIOI:: ",self.validate_move_action(action))
             return self.validate_move_action(action)
 
     def validate_action(self, action: StymieAction) -> bool:
@@ -232,7 +230,6 @@ class StymieState(State):
             col = action.get_col()
             row = action.get_row()
             self.__grid[row][col] = self.__acting_player
-            print("AQUI", self.__check_can_place())
             self._canpalce = self.__check_can_place()
             if not self.__check_can_place():
                 self._stage = "inplay"  # quando todas as pecas estiverem colocadas
@@ -244,7 +241,6 @@ class StymieState(State):
                 colfim = action.get_colFim()
                 rowfim = action.get_rowFim()
                 self.__grid[rowfim][colfim] = self.__acting_player
-            print("ELSE STAGE"+self._stage)
         # determine if there is a winner
         self.__has_winner = self.__check_winner(self.__acting_player)
 

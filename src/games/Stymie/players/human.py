@@ -15,7 +15,6 @@ class HumanStymiePlayer(StymiePlayer):
     def get_action(self, state: StymieState):
         state.display()
         stage = state._stage
-        print("CAN PALCE",state._canpalce)
 
         if stage == "placement":
             while True:
