@@ -15,6 +15,8 @@ class HumanStymiePlayer(StymiePlayer):
     def get_action(self, state: StymieState):
         state.display()
         stage = state._stage
+        print("CAN PALCE",state._canpalce)
+
         if stage == "placement":
             while True:
 
@@ -24,7 +26,7 @@ class HumanStymiePlayer(StymiePlayer):
                 except Exception:
                     continue
         else:
-            if stage.__check_can_place():
+            if state._canpalce:
                 while True:
                     op = (int(input(f"Add Piece(1) or Move Piece(2): ")))
                     if op == 1 or op == 2:
@@ -37,7 +39,11 @@ class HumanStymiePlayer(StymiePlayer):
                                             int(input(f"Player {state.get_acting_player()}, choose the starting row: ")),
                                             int(input(f"Player {state.get_acting_player()}, choose the final column: ")),
                                             int(input(f"Player {state.get_acting_player()}, choose the final row: ")))
-
+            else:
+                return StymieMoveAction(int(input(f"Player {state.get_acting_player()}, choose the starting column: ")),
+                                        int(input(f"Player {state.get_acting_player()}, choose the starting row: ")),
+                                        int(input(f"Player {state.get_acting_player()}, choose the final column: ")),
+                                        int(input(f"Player {state.get_acting_player()}, choose the final row: ")))
     def event_action(self, pos: int, action, new_state: StymieState):
         # ignore
         pass

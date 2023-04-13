@@ -5,7 +5,8 @@ from games.Stymie.result import StymieResult
 from games.Stymie.action import StymiePlacementAction
 from games.Stymie.action import StymieInPlayAction
 from games.Stymie.action import StymieAddAction
-
+from games.Stymie.action import StymieMoveAction
+from games.game_simulator import GameSimulator
 
 class StymieState(State):
     EMPTY_CELL = -1
@@ -13,7 +14,7 @@ class StymieState(State):
     def __init__(self, grid: int):
         super().__init__()
         self._stage = "placement"
-
+        self._canpalce = True
         if grid < 3:
             raise Exception("the number of cols must be 3 or over")
         """
@@ -44,6 +45,7 @@ class StymieState(State):
         determine if a winner was found already 
         """
         self.__has_winner = False
+
     def __check_can_place(self):
         arraynotplace = []
         arrayspaces = []
@@ -51,38 +53,35 @@ class StymieState(State):
             for col in range(0, self.__num_cols):
                 arrayspaces.append((row, col))
                 if self.__grid[row][col] != StymieState.EMPTY_CELL:
-                    arraynotplace.append((row,col))
+                    arraynotplace.append((row, col))
                     if row - 1 < self.__num_rows and col - 1 < self.__num_cols:
-                        arraynotplace.append((row-1, col-1))
-                    if row -1 < self.__num_rows and col < self.__num_cols:
-                        arraynotplace.append((row-1, col))
-                    if row < self.__num_rows and col -1 < self.__num_cols:
-                        arraynotplace.append((row, col-1))
-                    if row +1 < self.__num_rows and col +1 < self.__num_cols:
-                        arraynotplace.append((row+1, col+1))
-                    if row +1 < self.__num_rows and col < self.__num_cols:
-                        arraynotplace.append((row+1, col))
-                    if row < self.__num_rows and col+1 < self.__num_cols:
-                        arraynotplace.append((row, col+1))
+                        arraynotplace.append((row - 1, col - 1))
+                    if row - 1 < self.__num_rows and col < self.__num_cols:
+                        arraynotplace.append((row - 1, col))
+                    if row < self.__num_rows and col - 1 < self.__num_cols:
+                        arraynotplace.append((row, col - 1))
+                    if row + 1 < self.__num_rows and col + 1 < self.__num_cols:
+                        arraynotplace.append((row + 1, col + 1))
+                    if row + 1 < self.__num_rows and col < self.__num_cols:
+                        arraynotplace.append((row + 1, col))
+                    if row < self.__num_rows and col + 1 < self.__num_cols:
+                        arraynotplace.append((row, col + 1))
                     if row - 1 < self.__num_rows and col + 1 < self.__num_cols:
-                        arraynotplace.append((row-1, col +1))
-                    if row +1 < self.__num_rows and col -1 < self.__num_cols:
-                        arraynotplace.append((row+1, col-1))
+                        arraynotplace.append((row - 1, col + 1))
+                    if row + 1 < self.__num_rows and col - 1 < self.__num_cols:
+                        arraynotplace.append((row + 1, col - 1))
 
         set1 = set(arraynotplace)
         set2 = set(arrayspaces)
-        diff = set2 -set1
-        print("Not",len(arraynotplace))
-        print("Spacce",len(arrayspaces))
-        print("Diff",diff)
+        diff = set2 - set1
+
         itens = []
         for item in diff:
             itens.append(item)
-        if len(itens)==0:
+        if len(itens) == 0:
             return False
         if len(arraynotplace) == len(arrayspaces):
             return False
-
 
         if arraynotplace != arrayspaces:
             return True
@@ -129,8 +128,7 @@ class StymieState(State):
 
     def get_num_players(self):
         return 2
-
-    def validate_place_action(self, action: StymiePlacementAction) -> bool:
+    def validate_inplay_place_action(self, action: StymieAddAction) -> bool:
         col = action.get_col()
         row = action.get_row()
         # valid column
@@ -142,16 +140,16 @@ class StymieState(State):
         if self.__grid[row][col] != StymieState.EMPTY_CELL:
             return False
         # adjacent
-        if row-1 < self.__num_rows and col-1 < self.__num_cols:
+        if row - 1 < self.__num_rows and col - 1 < self.__num_cols:
             if self.__grid[row - 1][col - 1] != StymieState.EMPTY_CELL:
                 return False
-        if row-1 < self.__num_rows and col < self.__num_cols:
+        if row - 1 < self.__num_rows and col < self.__num_cols:
             if self.__grid[row - 1][col] != StymieState.EMPTY_CELL:
                 return False
-        if row < self.__num_rows and col-1 < self.__num_cols:
+        if row < self.__num_rows and col - 1 < self.__num_cols:
             if self.__grid[row][col - 1] != StymieState.EMPTY_CELL:
                 return False
-        if row + 1 < self.__num_rows and col+1 < self.__num_cols:
+        if row + 1 < self.__num_rows and col + 1 < self.__num_cols:
             if self.__grid[row + 1][col + 1] != StymieState.EMPTY_CELL:
                 return False
         if row + 1 < self.__num_rows and col < self.__num_cols:
@@ -167,12 +165,61 @@ class StymieState(State):
             if self.__grid[row + 1][col - 1] != StymieState.EMPTY_CELL:
                 return False
         return True
+    def validate_place_action(self, action: StymiePlacementAction) -> bool:
+        col = action.get_col()
+        row = action.get_row()
+        # valid column
+        if col < 0 or col >= self.__num_cols:
+            return False
+        if row < 0 or row >= self.__num_rows:
+            return False
+        # full column
+        if self.__grid[row][col] != StymieState.EMPTY_CELL:
+            return False
+        # adjacent
+        if row - 1 < self.__num_rows and col - 1 < self.__num_cols:
+            if self.__grid[row - 1][col - 1] != StymieState.EMPTY_CELL:
+                return False
+        if row - 1 < self.__num_rows and col < self.__num_cols:
+            if self.__grid[row - 1][col] != StymieState.EMPTY_CELL:
+                return False
+        if row < self.__num_rows and col - 1 < self.__num_cols:
+            if self.__grid[row][col - 1] != StymieState.EMPTY_CELL:
+                return False
+        if row + 1 < self.__num_rows and col + 1 < self.__num_cols:
+            if self.__grid[row + 1][col + 1] != StymieState.EMPTY_CELL:
+                return False
+        if row + 1 < self.__num_rows and col < self.__num_cols:
+            if self.__grid[row + 1][col] != StymieState.EMPTY_CELL:
+                return False
+        if row < self.__num_rows and col + 1 < self.__num_cols:
+            if self.__grid[row][col + 1] != StymieState.EMPTY_CELL:
+                return False
+        if row - 1 < self.__num_rows and col + 1 < self.__num_cols:
+            if self.__grid[row - 1][col + 1] != StymieState.EMPTY_CELL:
+                return False
+        if row + 1 < self.__num_rows and col - 1 < self.__num_cols:
+            if self.__grid[row + 1][col - 1] != StymieState.EMPTY_CELL:
+                return False
+        return True
+    def validate_move_action(self, action: StymieMoveAction) -> bool:
+        colini = action.get_colIni()
+        rowini = action.get_rowIni()
+        colfim = action.get_colFim()
+        rowfim = action.get_rowFim()
+        print("ACTING PLAYER", self.__acting_player)
+        if self.__grid[rowfim][colfim] != StymieState.EMPTY_CELL:
+            return False
+        if self.__grid[rowini][colini] != self.__acting_player:
+            return False
+        return True
 
     def validate_inplay_action(self, action: StymieInPlayAction) -> bool:
-        if isinstance(action,StymieAddAction):
-            #vou aqui
-            pass
-        return False
+        if isinstance(action, StymieAddAction):
+            return self.validate_inplay_place_action(action)
+        elif isinstance(action, StymieMoveAction):
+            print("OIOIOPIOI:: ",self.validate_move_action(action))
+            return self.validate_move_action(action)
 
     def validate_action(self, action: StymieAction) -> bool:
         if self._stage == "placement":
@@ -185,12 +232,19 @@ class StymieState(State):
             col = action.get_col()
             row = action.get_row()
             self.__grid[row][col] = self.__acting_player
-            print("AQUI",self.__check_can_place())
+            print("AQUI", self.__check_can_place())
+            self._canpalce = self.__check_can_place()
             if not self.__check_can_place():
-                self._stage = "inplay" # quando todas as pecas estiverem colocadas
+                self._stage = "inplay"  # quando todas as pecas estiverem colocadas
         else:
-            pass
-
+            if isinstance(action, StymieMoveAction):
+                colini = action.get_colIni()
+                rowini = action.get_rowIni()
+                self.__grid[rowini][colini] = self.EMPTY_CELL
+                colfim = action.get_colFim()
+                rowfim = action.get_rowFim()
+                self.__grid[rowfim][colfim] = self.__acting_player
+            print("ELSE STAGE"+self._stage)
         # determine if there is a winner
         self.__has_winner = self.__check_winner(self.__acting_player)
 
@@ -261,6 +315,9 @@ class StymieState(State):
         cloned_state.__turns_count = self.__turns_count
         cloned_state.__acting_player = self.__acting_player
         cloned_state.__has_winner = self.__has_winner
+        cloned_state._stage = self._stage
+        cloned_state._canpalce = self._canpalce
+        print("CANPALCE11111: ",cloned_state._canpalce)
         for row in range(0, self.__num_rows):
             for col in range(0, self.__num_cols):
                 cloned_state.__grid[row][col] = self.__grid[row][col]
