@@ -54,11 +54,11 @@ class StymieState(State):
                 arrayspaces.append((row, col))
                 if self.__grid[row][col] != StymieState.EMPTY_CELL:
                     arraynotplace.append((row, col))
-                    if row - 1 < self.__num_rows and col - 1 < self.__num_cols:
+                    if row - 1 >= 0 and col - 1 >= 0:
                         arraynotplace.append((row - 1, col - 1))
-                    if row - 1 < self.__num_rows and col < self.__num_cols:
+                    if row - 1 >= 0 and col < self.__num_cols:
                         arraynotplace.append((row - 1, col))
-                    if row < self.__num_rows and col - 1 < self.__num_cols:
+                    if row < self.__num_rows and col - 1 >= 0:
                         arraynotplace.append((row, col - 1))
                     if row + 1 < self.__num_rows and col + 1 < self.__num_cols:
                         arraynotplace.append((row + 1, col + 1))
@@ -66,28 +66,21 @@ class StymieState(State):
                         arraynotplace.append((row + 1, col))
                     if row < self.__num_rows and col + 1 < self.__num_cols:
                         arraynotplace.append((row, col + 1))
-                    if row - 1 < self.__num_rows and col + 1 < self.__num_cols:
+                    if row - 1 >= 0 and col + 1 < self.__num_cols:
                         arraynotplace.append((row - 1, col + 1))
-                    if row + 1 < self.__num_rows and col - 1 < self.__num_cols:
+                    if row + 1 < self.__num_rows and col - 1 >= 0:
                         arraynotplace.append((row + 1, col - 1))
 
         set1 = set(arraynotplace)
         set2 = set(arrayspaces)
         diff = set2 - set1
-
         itens = []
         for item in diff:
             itens.append(item)
         if len(itens) == 0:
             return False
-        if len(arraynotplace) == len(arrayspaces):
-            return False
-
-        if arraynotplace != arrayspaces:
-            return True
         else:
-            return False
-
+            return True
     def __check_winner(self, player):
         # check for 4 across
         for row in range(0, self.__num_rows):
@@ -140,13 +133,13 @@ class StymieState(State):
         if self.__grid[row][col] != StymieState.EMPTY_CELL:
             return False
         # adjacent
-        if row - 1 < self.__num_rows and col - 1 < self.__num_cols:
+        if row - 1 < self.__num_rows and col - 1 < self.__num_cols and row - 1 >= 0 and col -1 >= 0:
             if self.__grid[row - 1][col - 1] != StymieState.EMPTY_CELL:
                 return False
-        if row - 1 < self.__num_rows and col < self.__num_cols:
+        if row - 1 < self.__num_rows and col < self.__num_cols and row - 1 >= 0:
             if self.__grid[row - 1][col] != StymieState.EMPTY_CELL:
                 return False
-        if row < self.__num_rows and col - 1 < self.__num_cols:
+        if row < self.__num_rows and col - 1 < self.__num_cols and col -1 >= 0:
             if self.__grid[row][col - 1] != StymieState.EMPTY_CELL:
                 return False
         if row + 1 < self.__num_rows and col + 1 < self.__num_cols:
@@ -158,10 +151,10 @@ class StymieState(State):
         if row < self.__num_rows and col + 1 < self.__num_cols:
             if self.__grid[row][col + 1] != StymieState.EMPTY_CELL:
                 return False
-        if row - 1 < self.__num_rows and col + 1 < self.__num_cols:
+        if row - 1 < self.__num_rows and col + 1 < self.__num_cols and row -1 >= 0:
             if self.__grid[row - 1][col + 1] != StymieState.EMPTY_CELL:
                 return False
-        if row + 1 < self.__num_rows and col - 1 < self.__num_cols:
+        if row + 1 < self.__num_rows and col - 1 < self.__num_cols and col -1 >= 0:
             if self.__grid[row + 1][col - 1] != StymieState.EMPTY_CELL:
                 return False
         return True
@@ -177,13 +170,13 @@ class StymieState(State):
         if self.__grid[row][col] != StymieState.EMPTY_CELL:
             return False
         # adjacent
-        if row - 1 < self.__num_rows and col - 1 < self.__num_cols:
+        if row - 1 >= 0 and col - 1 >= 0:
             if self.__grid[row - 1][col - 1] != StymieState.EMPTY_CELL:
                 return False
-        if row - 1 < self.__num_rows and col < self.__num_cols:
+        if row - 1 >= 0 and col < self.__num_cols:
             if self.__grid[row - 1][col] != StymieState.EMPTY_CELL:
                 return False
-        if row < self.__num_rows and col - 1 < self.__num_cols:
+        if row < self.__num_rows and col - 1 >= 0:
             if self.__grid[row][col - 1] != StymieState.EMPTY_CELL:
                 return False
         if row + 1 < self.__num_rows and col + 1 < self.__num_cols:
@@ -195,10 +188,10 @@ class StymieState(State):
         if row < self.__num_rows and col + 1 < self.__num_cols:
             if self.__grid[row][col + 1] != StymieState.EMPTY_CELL:
                 return False
-        if row - 1 < self.__num_rows and col + 1 < self.__num_cols:
+        if row - 1 >= 0 and col + 1 < self.__num_cols:
             if self.__grid[row - 1][col + 1] != StymieState.EMPTY_CELL:
                 return False
-        if row + 1 < self.__num_rows and col - 1 < self.__num_cols:
+        if row + 1 < self.__num_rows and col - 1 >= 0:
             if self.__grid[row + 1][col - 1] != StymieState.EMPTY_CELL:
                 return False
         return True
@@ -207,10 +200,39 @@ class StymieState(State):
         rowini = action.get_rowIni()
         colfim = action.get_colFim()
         rowfim = action.get_rowFim()
+        print("ABS: ", abs(rowfim - rowini), "ABS2: ", abs(colfim - colini))
+        aux = False
         if self.__grid[rowfim][colfim] != StymieState.EMPTY_CELL:
             return False
         if self.__grid[rowini][colini] != self.__acting_player:
             return False
+        if abs(rowfim - rowini) > 1 or abs(colfim - colini) > 1:
+            return False
+        # if rowini - 1 >= 0 and colini - 1 >= 0:
+        #     if [rowfim][colfim] == [rowini - 1][colini -1]:
+        #         aux = True
+        # if rowini - 1 >= 0:
+        #     if [rowfim][colfim] == [rowini -1][colini]:
+        #         aux = True
+        # if colini - 1 >= 0:
+        #     if [rowfim][colfim] == [rowini][colini -1]:
+        #         aux = True
+        # if rowini +1 < self.__num_rows and colini +1 < self.__num_cols:
+        #     if [rowfim][colfim] == [rowini+1][colini+1]:
+        #         aux = True
+        # if rowini + 1 < self.__num_rows:
+        #     if [rowfim][colfim] == [rowini+1][colini]:
+        #         aux = True
+        # if colini + 1 < self.__num_rows:
+        #     if [rowfim][colfim] == [rowini][colini +1]:
+        #         aux = True
+        # if rowini -1 >= 0 and colini +1 < self.__num_rows:
+        #     if [rowfim][colfim] == [rowini -1][colini+1]:
+        #         aux = True
+        # if rowini +1 < self.__num_rows and colini-1 >= 0:
+        #     if [rowfim][colfim] == [rowini+1][colini-1]:
+        #         aux = True
+
         return True
 
     def validate_inplay_action(self, action: StymieInPlayAction) -> bool:
@@ -231,6 +253,7 @@ class StymieState(State):
             row = action.get_row()
             self.__grid[row][col] = self.__acting_player
             self._canpalce = self.__check_can_place()
+            print("CAN PALCE: ", self._canpalce)
             if not self.__check_can_place():
                 self._stage = "inplay"  # quando todas as pecas estiverem colocadas
         else:
@@ -241,6 +264,13 @@ class StymieState(State):
                 colfim = action.get_colFim()
                 rowfim = action.get_rowFim()
                 self.__grid[rowfim][colfim] = self.__acting_player
+            elif isinstance(action, StymieAddAction):
+                col = action.get_col()
+                row = action.get_row()
+                print(f"COL: {col}, ROW: {row}")
+                self.__grid[row][col] = self.__acting_player
+            self._canpalce = self.__check_can_place()
+            print("CANPALCE: ", self._canpalce)
         # determine if there is a winner
         self.__has_winner = self.__check_winner(self.__acting_player)
 
@@ -313,7 +343,6 @@ class StymieState(State):
         cloned_state.__has_winner = self.__has_winner
         cloned_state._stage = self._stage
         cloned_state._canpalce = self._canpalce
-        print("CANPALCE11111: ",cloned_state._canpalce)
         for row in range(0, self.__num_rows):
             for col in range(0, self.__num_cols):
                 cloned_state.__grid[row][col] = self.__grid[row][col]
