@@ -84,6 +84,8 @@ class StymieState(State):
         else:
             return True
     def __check_winner(self, player):
+        if self.__count_acting1 == 7 or self.__count_acting0 == 7:
+            return True
         # check for 4 across
         for row in range(0, self.__num_rows):
             for col in range(0, self.__num_cols - 2):

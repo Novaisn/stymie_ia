@@ -15,9 +15,9 @@ class HumanStymiePlayer(StymiePlayer):
     def get_action(self, state: StymieState):
         state.display()
         stage = state._stage
-        aux = state.__count_acting1
+        aux = state._StymieState__count_acting1
         print("COUNT1: ", aux)
-        print("COUNT0: ", state.__count_acting0)
+        print("COUNT0: ", state._StymieState__count_acting0)
         if stage == "placement":
             while True:
 
