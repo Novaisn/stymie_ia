@@ -181,11 +181,12 @@ class StymieState(State):
         rowini = action.get_rowIni()
         colfim = action.get_colFim()
         rowfim = action.get_rowFim()
-        aux = False
+        aux = "a"
         if self.__grid[rowfim][colfim] != StymieState.EMPTY_CELL:
             return False
         if self.__grid[rowini][colini] != self.__acting_player:
-            return False
+            if self.__grid[rowini][colini] != 2 and self.__acting_player == 0 or self.__grid[rowini][colini] != 3 and self.__acting_player == 1:
+                return False
         for i in range(-1, 2):
             for j in range(-1, 2):
                 if rowini + i >= 0 and rowini + i < len(self.__grid) and colini + j >= 0 and colini + j < len(
@@ -293,12 +294,23 @@ class StymieState(State):
             if isinstance(action, StymieMoveAction):
                 colini = action.get_colIni()
                 rowini = action.get_rowIni()
-                self.__grid[rowini][colini] = self.EMPTY_CELL
                 colfim = action.get_colFim()
                 rowfim = action.get_rowFim()
-                self.__grid[rowfim][colfim] = self.__acting_player
+                if self.__grid[rowini][colini] == 2:
+                    self.__grid[rowfim][colfim] = 2
+                elif self.__grid[rowini][colini] == 3:
+                    self.__grid[rowfim][colfim] = 3
+                else:
+                    self.__grid[rowfim][colfim] = self.__acting_player
+                self.__grid[rowini][colini] = self.EMPTY_CELL
                 pieces = self.get_path_pieces(rowini, colini, rowfim, colfim)
                 for i in pieces:
+                    if self.__grid[i[0]][i[1]] == 2:
+                        self.__grid[i[0]][i[1]] = 3
+                        continue
+                    elif self.__grid[i[0]][i[1]] == 3:
+                        self.__grid[i[0]][i[1]] = 2
+                        continue
                     if self.__grid[i[0]][i[1]] != self.__acting_player:
                         self.__grid[i[0]][i[1]] = self.EMPTY_CELL
                         if self.__acting_player == 0:
