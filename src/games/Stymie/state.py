@@ -86,37 +86,14 @@ class StymieState(State):
     def __check_winner(self, player):
         if self.__count_acting1 == 7 or self.__count_acting0 == 7:
             return True
-        # check for 4 across
-        for row in range(0, self.__num_rows):
-            for col in range(0, self.__num_cols - 2):
-                if self.__grid[row][col] == player and \
-                        self.__grid[row][col + 1] == player and \
-                        self.__grid[row][col + 2] == player:
-                    return True
+        countpieces = 0
+        for row in range(1, self.__num_rows-1):
+            for col in range(1, self.__num_cols-1):
+                if self.__grid[row][col] == player:
+                    countpieces += 1
 
-        # check for 4 up and down
-        for row in range(0, self.__num_rows - 2):
-            for col in range(0, self.__num_cols):
-                if self.__grid[row][col] == player and \
-                        self.__grid[row + 1][col] == player and \
-                        self.__grid[row + 2][col] == player:
-                    return True
-
-        # check upward diagonal
-        for row in range(2, self.__num_rows):
-            for col in range(0, self.__num_cols - 2):
-                if self.__grid[row][col] == player and \
-                        self.__grid[row - 1][col + 1] == player and \
-                        self.__grid[row - 2][col + 2] == player:
-                    return True
-
-        # check downward diagonal
-        for row in range(0, self.__num_rows - 2):
-            for col in range(0, self.__num_cols - 2):
-                if self.__grid[row][col] == player and \
-                        self.__grid[row + 1][col + 1] == player and \
-                        self.__grid[row + 2][col + 2] == player:
-                    return True
+        if countpieces == 7:
+            return True
 
         return False
 
@@ -204,7 +181,6 @@ class StymieState(State):
         rowini = action.get_rowIni()
         colfim = action.get_colFim()
         rowfim = action.get_rowFim()
-        print("ABS: ", abs(rowfim - rowini), "ABS2: ", abs(colfim - colini))
         aux = False
         if self.__grid[rowfim][colfim] != StymieState.EMPTY_CELL:
             return False
