@@ -36,13 +36,13 @@ def run_simulation(desc: str, simulator: GameSimulator, iterations: int):
 def main():
     print("ESTG IA Games Simulator")
 
-    num_iterations = 10
+    num_iterations = 100
 
     stymie_simulations = [
         {
             "name": "TicTacToe - Human VS Random",
-            "player1": HumanStymiePlayer("Human"),
-            "player2": HumanStymiePlayer("Random")
+            "player1": RandomStymiePlayer("Random 1"),
+            "player2": RandomStymiePlayer("Random 2")
         },
     ]
 

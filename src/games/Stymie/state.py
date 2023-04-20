@@ -382,7 +382,7 @@ class StymieState(State):
         return self.__turns_count > (self.__num_cols * self.__num_rows)
 
     def is_finished(self) -> bool:
-        return self.__has_winner or self.__is_full()
+        return self.__has_winner #or self.__is_full()
 
     def get_acting_player(self) -> int:
         return self.__acting_player
@@ -418,13 +418,35 @@ class StymieState(State):
         pass
 
     def get_possible_actions(self):
-        actions = []
-        for i in range(0, self.__num_rows):
-            for j in range(0, self.__num_cols):
-                action = StymieAction(i, j)
-                if self.validate_action(action):
-                    actions.append(action)
-        return actions
+        return list(filter(
+            lambda action: self.validate_place_action(action),
+            [
+                StymiePlacementAction(col, row)
+                for row in range(self.get_num_rows())
+                for col in range(self.get_num_cols())
+            ]
+        ))
+    def get_possible_add(self):
+        return list(filter(
+            lambda action: self.validate_inplay_place_action(action),
+            [
+                StymieAddAction(col, row)
+                for row in range(self.get_num_rows())
+                for col in range(self.get_num_cols())
+            ]
+        ))
+
+    def get_possible_move(self):
+        return list(filter(
+            lambda action: self.validate_move_action(action),
+            [
+                StymieMoveAction(colini, rowini, colfim, rowfim)
+                for rowini in range(self.get_num_rows())
+                for colini in range(self.get_num_cols())
+                for rowfim in range(self.get_num_rows())
+                for colfim in range(self.get_num_cols())
+            ]
+        ))
 
     def sim_play(self, action):
         new_state = self.clone()
