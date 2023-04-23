@@ -18,8 +18,9 @@ from games.TicTacToe.players.Offminimax import OffMinimaxTicTacToePlayer
 from games.TicTacToe.players.minimax import OffMinimaxTicTacToePlayer
 from games.TicTacToe.players.Defminimax import DefMinimaxTicTacToePlayer
 from games.Stymie.simulator import StymieSimulator
-from games.Stymie.players.human import HumanStymiePlayer
+from games.Stymie.players.greedy_move_middle import GreedyStymiePlayer
 from games.Stymie.players.random import RandomStymiePlayer
+from games.Stymie.players.human import HumanStymiePlayer
 
 
 def run_simulation(desc: str, simulator: GameSimulator, iterations: int):
@@ -36,14 +37,24 @@ def run_simulation(desc: str, simulator: GameSimulator, iterations: int):
 def main():
     print("ESTG IA Games Simulator")
 
-    num_iterations = 100
+    num_iterations = 1
 
     stymie_simulations = [
         {
-            "name": "TicTacToe - Human VS Random",
+            "name": "TicTacToe - R VS R",
             "player1": RandomStymiePlayer("Random 1"),
             "player2": RandomStymiePlayer("Random 2")
         },
+        {
+            "name": "TicTacToe - H VS G",
+            "player1": RandomStymiePlayer("Random 1"),
+            "player2": GreedyStymiePlayer("Greedy 2")
+        },
+        {
+            "name": "TicTacToe - R VS R",
+            "player1": RandomStymiePlayer("Random 1"),
+            "player2": RandomStymiePlayer("Random 2")
+        }
     ]
 
 
