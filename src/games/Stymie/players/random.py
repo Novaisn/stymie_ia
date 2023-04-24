@@ -24,16 +24,14 @@ class RandomStymiePlayer(StymiePlayer):
         actionsmove = state.get_possible_move()
 
         if stage == "placement":
-            print("place")
             return random.choice(actionsplacemnt)
+
         else:
             if canpalce:
                 op = randint(1, 2)
                 if op == 1:
-                    print("add")
                     return random.choice(actionsadd)
                 elif op == 2:
-                    print("move")
                     return random.choice(actionsmove)
             else:
                 return random.choice(actionsmove)

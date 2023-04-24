@@ -47,13 +47,13 @@ def main():
         },
         {
             "name": "TicTacToe - H VS G",
-            "player1": RandomStymiePlayer("Random 1"),
-            "player2": GreedyStymiePlayer("Greedy 2")
+            "player1": RandomStymiePlayer("Random 3"),
+            "player2": GreedyStymiePlayer("Greedy 1")
         },
         {
             "name": "TicTacToe - R VS R",
-            "player1": RandomStymiePlayer("Random 1"),
-            "player2": RandomStymiePlayer("Random 2")
+            "player1": RandomStymiePlayer("Random 4"),
+            "player2": RandomStymiePlayer("Random 5")
         }
     ]
 

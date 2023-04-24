@@ -26,7 +26,7 @@ class GreedyStymiePlayer(StymiePlayer):
                 distance = min([abs(move.get_rowFim() - x) + abs(move.get_colFim() - y) for x, y in center])
                 if distance < min_distance:
                     min_distance = distance
-                    best_move = (move.get_colFim(), move.get_rowFim())
+                    best_move = (move.get_rowFim(), move.get_colFim())
         if best_move is None:
             raise Exception("There is no valid action")
         return best_move
@@ -52,72 +52,49 @@ class GreedyStymiePlayer(StymiePlayer):
             raise Exception("There is no valid action")
         return closest_piece
 
-    def get_action(self, state: StymieState):
+    def get_greedy_add(self, state: StymieState) -> Tuple[int, int]:
         grid = state.get_grid()
+        max_count = -1
+        selected_col = None
+        selected_row = None
+        for col in range(state.get_num_cols()):
+            for row in range(state.get_num_rows() - 1, -1, -1):
+                if state.validate_action(StymieAddAction(col, row)):
+                    count = 0
+                    for i in range(state.get_num_rows()):
+                        if grid[i][col] == self.get_current_pos():
+                            count += 1
+                    if count > max_count:
+                        max_count = count
+                        selected_col = col
+                        selected_row = row
+                    elif count == max_count and row < selected_row:
+                        selected_col = col
+                        selected_row = row
+
+        if selected_col is None:
+            raise Exception("There is no valid action")
+        if selected_row is None:
+            raise Exception("There is no valid action")
+
+        return selected_col, selected_row
+
+
+    def get_action(self, state: StymieState):
         stage = state._stage
-        canpalce = state._canpalce
+        canplace = state._canpalce
 
         if stage == "placement":
-            max_count = -1
-            selected_col = None
-            selected_row = None
-            for col in range(state.get_num_cols()):
-                for row in range(state.get_num_rows() - 1, -1, -1):
-                    if state.validate_action(StymieAddAction(col, row)):
-                        count = 0
-                        for i in range(state.get_num_rows()):
-                            if grid[i][col] == self.get_current_pos():
-                                count += 1
-                        if count > max_count:
-                            max_count = count
-                            selected_col = col
-                            selected_row = row
-                        elif count == max_count and row < selected_row:
-                            selected_col = col
-                            selected_row = row
-
-            if selected_col is None:
-                raise Exception("There is no valid action")
-            if selected_row is None:
-                raise Exception("There is no valid action")
-
-            print("placeG")
-            return StymieAddAction(selected_col, selected_row)
+            add_move = self.get_greedy_add(state)
+            return StymieAddAction(add_move[0], add_move[1])
 
         else:
-            if canpalce:
-                max_count = -1
-                selected_col = None
-                selected_row = None
-                for col in range(state.get_num_cols()):
-                    for row in range(state.get_num_rows() - 1, -1, -1):
-                        if state.validate_action(StymieAddAction(col, row)):
-                            count = 0
-                            for i in range(state.get_num_rows()):
-                                if grid[i][col] == self.get_current_pos():
-                                    count += 1
-                            if count > max_count:
-                                max_count = count
-                                selected_col = col
-                                selected_row = row
-                            elif count == max_count and row < selected_row:
-                                selected_col = col
-                                selected_row = row
-
-                if selected_col is None:
-                    raise Exception("There is no valid action")
-                if selected_row is None:
-                    raise Exception("There is no valid action")
-
-                print("placeG")
-                return StymieAddAction(selected_col, selected_row)
+            if canplace:
+                add_move = self.get_greedy_add(state)
+                return StymieAddAction(add_move[0], add_move[1])
             else:
-                print("PROBLEM")
                 position = self.get_closest_piece(state)
-                print(position)
                 best_move = self.get_closest_move(state, position)
-                print(best_move)
-                print("PROBLEM2")
 
                 return StymieMoveAction(position[1], position[0], best_move[1], best_move[0])
 
