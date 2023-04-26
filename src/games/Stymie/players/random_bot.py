@@ -1,14 +1,9 @@
 import random
-
 from random import randint
-from games.state import State
 
-from games.Stymie.action import StymieAction
+from games.state import State
 from games.Stymie.player import StymiePlayer
 from games.Stymie.state import StymieState
-from games.Stymie.action import StymiePlacementAction
-from games.Stymie.action import StymieAddAction
-from games.Stymie.action import StymieMoveAction
 
 
 class RandomStymiePlayer(StymiePlayer):

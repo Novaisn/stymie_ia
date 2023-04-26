@@ -45,6 +45,7 @@ class HumanStymiePlayer(StymiePlayer):
                                         int(input(f"Player {state.get_acting_player()}, choose the starting row: ")),
                                         int(input(f"Player {state.get_acting_player()}, choose the final column: ")),
                                         int(input(f"Player {state.get_acting_player()}, choose the final row: ")))
+
     def event_action(self, pos: int, action, new_state: StymieState):
         # ignore
         pass

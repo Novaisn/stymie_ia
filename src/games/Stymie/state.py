@@ -6,6 +6,7 @@ from games.Stymie.action import StymiePlacementAction
 from games.Stymie.action import StymieInPlayAction
 from games.Stymie.action import StymieAddAction
 from games.Stymie.action import StymieMoveAction
+from games.Stymie.player import StymiePlayer
 from games.game_simulator import GameSimulator
 
 class StymieState(State):
@@ -264,6 +265,9 @@ class StymieState(State):
                     path_pieces.append((row, col))
                 row += delta_row
                 col += delta_col
+
+
+
         elif self.is_orthogonal_move(rowini, colini, rowfim, colfim):
             if rowini == rowfim:
                 delta_col = 1 if colfim > colini else -1
@@ -447,6 +451,16 @@ class StymieState(State):
                 for colfim in range(self.get_num_cols())
             ]
         ))
+
+    def get_player_pieces(self):
+        pieces = []
+
+        for col in range(0, self.get_num_cols()):
+            for row in range(0, self.get_num_rows()):
+                if self.__grid[col][row] == self.__acting_player:
+                    pieces.append((col, row))
+
+        return pieces
 
     def sim_play(self, action):
         new_state = self.clone()

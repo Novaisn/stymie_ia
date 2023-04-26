@@ -18,8 +18,9 @@ from games.TicTacToe.players.Offminimax import OffMinimaxTicTacToePlayer
 from games.TicTacToe.players.minimax import OffMinimaxTicTacToePlayer
 from games.TicTacToe.players.Defminimax import DefMinimaxTicTacToePlayer
 from games.Stymie.simulator import StymieSimulator
-from games.Stymie.players.greedy_move_middle import GreedyStymiePlayer
-from games.Stymie.players.random import RandomStymiePlayer
+from games.Stymie.players.greedy_move_middle import GreedyMoveStymiePlayer
+from games.Stymie.players.greedy_eat_pieces import GreedyEatStymiePlayer
+from games.Stymie.players.random_bot import RandomStymiePlayer
 from games.Stymie.players.human import HumanStymiePlayer
 
 
@@ -37,30 +38,39 @@ def run_simulation(desc: str, simulator: GameSimulator, iterations: int):
 def main():
     print("ESTG IA Games Simulator")
 
-    num_iterations = 1
+    num_iterations = 100
 
     stymie_simulations = [
         {
             "name": "TicTacToe - R VS R",
-            "player1": RandomStymiePlayer("Random 1"),
-            "player2": RandomStymiePlayer("Random 2")
+            "player1": RandomStymiePlayer("Random"),
+            "player2": RandomStymiePlayer("Random")
         },
         {
-            "name": "TicTacToe - H VS G",
-            "player1": RandomStymiePlayer("Random 3"),
-            "player2": GreedyStymiePlayer("Greedy 1")
+            "name": "TicTacToe - R VS GE",
+            "player1": RandomStymiePlayer("Random"),
+            "player2": GreedyEatStymiePlayer("Greedy_Eat")
+        },
+        {
+            "name": "TicTacToe - R VS GM",
+            "player1": RandomStymiePlayer("Random"),
+            "player2": RandomStymiePlayer("Random")
+        },
+        {
+            "name": "TicTacToe - GM VS GE",
+            "player1": RandomStymiePlayer("Random"),
+            "player2": GreedyEatStymiePlayer("Greedy_Eat")
         },
         {
             "name": "TicTacToe - R VS R",
-            "player1": RandomStymiePlayer("Random 4"),
-            "player2": RandomStymiePlayer("Random 5")
+            "player1": RandomStymiePlayer("Random"),
+            "player2": RandomStymiePlayer("Random")
         }
     ]
 
-
-
     for sim in stymie_simulations:
         run_simulation(sim["name"], StymieSimulator(sim["player1"], sim["player2"]), num_iterations)
+
 
 if __name__ == "__main__":
     main()
