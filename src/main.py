@@ -22,6 +22,7 @@ from games.Stymie.players.greedy_move_middle import GreedyMoveStymiePlayer
 from games.Stymie.players.greedy_eat_pieces import GreedyEatStymiePlayer
 from games.Stymie.players.random_bot import RandomStymiePlayer
 from games.Stymie.players.human import HumanStymiePlayer
+from games.Stymie.players.minimax import MinimaxStymiePlayer
 
 
 def run_simulation(desc: str, simulator: GameSimulator, iterations: int):
@@ -38,34 +39,34 @@ def run_simulation(desc: str, simulator: GameSimulator, iterations: int):
 def main():
     print("ESTG IA Games Simulator")
 
-    num_iterations = 10
+    num_iterations = 1
 
     stymie_simulations = [
         {
-            "name": "TicTacToe - R VS R",
+            "name": "TicTacToe - R VS M",
             "player1": RandomStymiePlayer("Random"),
-            "player2": RandomStymiePlayer("Random")
+            "player2": MinimaxStymiePlayer("minimax")
         },
-        {
-            "name": "TicTacToe - R VS GE",
-            "player1": GreedyMoveStymiePlayer("Random"),
-            "player2": GreedyEatStymiePlayer("Greedy_Eat")
-        },
-        {
-            "name": "TicTacToe - R VS GM",
-            "player1": RandomStymiePlayer("Random"),
-            "player2": RandomStymiePlayer("Random")
-        },
-        {
-            "name": "TicTacToe - GM VS GE",
-            "player1": RandomStymiePlayer("Random"),
-            "player2": GreedyEatStymiePlayer("Greedy_Eat")
-        },
-        {
-            "name": "TicTacToe - R VS R",
-            "player1": RandomStymiePlayer("Random"),
-            "player2": RandomStymiePlayer("Random")
-        }
+        # {
+        #     "name": "TicTacToe - R VS GE",
+        #     "player1": GreedyMoveStymiePlayer("Random"),
+        #     "player2": GreedyEatStymiePlayer("Greedy_Eat")
+        # },
+        # {
+        #     "name": "TicTacToe - R VS GM",
+        #     "player1": RandomStymiePlayer("Random"),
+        #     "player2": RandomStymiePlayer("Random")
+        # },
+        # {
+        #     "name": "TicTacToe - GM VS GE",
+        #     "player1": RandomStymiePlayer("Random"),
+        #     "player2": GreedyEatStymiePlayer("Greedy_Eat")
+        # },
+        # {
+        #     "name": "TicTacToe - R VS R",
+        #     "player1": RandomStymiePlayer("Random"),
+        #     "player2": RandomStymiePlayer("Random")
+        # }
     ]
 
     for sim in stymie_simulations:
