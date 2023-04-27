@@ -39,7 +39,8 @@ class GreedyMoveStymiePlayer(StymiePlayer):
     def get_closest_piece(self, state: StymieState) -> Tuple[int, int]:
         center = [(i, j) for i in range(2, 5) for j in range(2, 5)]
         grid = state.get_grid()
-
+        possible_moves = state.get_possible_move()
+        possible_place = state.get_possible_add()
         # Find the closest piece to the center
         min_distance = float('inf')
         closest_piece = None
@@ -53,7 +54,13 @@ class GreedyMoveStymiePlayer(StymiePlayer):
                             closest_piece = (row, col)
 
         if closest_piece is None:
-            raise Exception("There is no valid action")
+            if possible_moves is not None:
+                aux = random.choice(possible_moves)
+                closest_piece = (aux.get_rowIni(),aux.get_colIni())
+        if closest_piece is None:
+            if possible_place is not None:
+                aux = random.choice(possible_place)
+                closest_piece = (aux.get_row(),aux.get_col())
         return closest_piece
 
     '''Escolhe qual é a melhor posição para adicionar uma peça, utilizando uma forma greedy
