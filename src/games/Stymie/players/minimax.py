@@ -44,10 +44,12 @@ class MinimaxStymiePlayer(StymiePlayer):
             longest = 2
         else:
             longest =2
-        if state.get_acting_player() == 0:
+
+        if state.get_acting_player() == 1:
             longest = state._StymieState__count_acting0 - state._StymieState__count_acting1
         else:
             longest = state._StymieState__count_acting1 - state._StymieState__count_acting0
+
         return longest
 
     """Implementation of minimax search (recursive, with alpha/beta pruning) :param state: the state for which the 
