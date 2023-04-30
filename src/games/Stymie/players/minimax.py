@@ -5,6 +5,12 @@ from games.Stymie.player import StymiePlayer
 from games.Stymie.state import StymieState
 from games.Stymie.result import StymieResult
 
+from games.Stymie.action import StymiePlacementAction
+
+from games.Stymie.action import StymieAddAction
+
+from games.Stymie.action import StymieInPlayAction
+
 
 class MinimaxStymiePlayer(StymiePlayer):
 
@@ -18,69 +24,30 @@ class MinimaxStymiePlayer(StymiePlayer):
 
     def __heuristic(self, state: StymieState):
         grid = state.get_grid()
+        stage = state._stage
         longest = 0
+        total_pieces = 0
+        max_count = -1
 
-        # check each line
-        for row in range(0, state.get_num_rows()):
-            seq = 0
-            for col in range(0, state.get_num_cols()):
-                if grid[row][col] == self.get_current_pos():
-                    seq += 1
-                else:
-                    if seq > longest:
-                        longest = seq
-                    seq = 0
-
-            if seq > longest:
-                longest = seq
-
-        # check each column
-        for col in range(0, state.get_num_cols()):
-            seq = 0
-            for row in range(0, state.get_num_rows()):
-                if grid[row][col] == self.get_current_pos():
-                    seq += 1
-                else:
-                    if seq > longest:
-                        longest = seq
-                    seq = 0
-
-            if seq > longest:
-                longest = seq
-
-        # check each upward diagonal
-        for row in range(3, state.get_num_rows()):
-            for col in range(0, state.get_num_cols() - 3):
-                seq1 = (1 if grid[row][col] == self.get_current_pos() else 0) + \
-                       (1 if grid[row - 1][col + 1] == self.get_current_pos() else 0) + \
-                       (1 if grid[row - 2][col + 2] == self.get_current_pos() else 0)
-
-                seq2 = (1 if grid[row - 1][col + 1] == self.get_current_pos() else 0) + \
-                       (1 if grid[row - 2][col + 2] == self.get_current_pos() else 0) + \
-                       (1 if grid[row - 3][col + 3] == self.get_current_pos() else 0)
-
-                if seq1 > longest:
-                    longest = seq1
-
-                if seq2 > longest:
-                    longest = seq2
-
-        # check each downward diagonal
-        for row in range(0, state.get_num_rows() - 3):
-            for col in range(0, state.get_num_cols() - 3):
-                seq1 = (1 if grid[row][col] == self.get_current_pos() else 0) + \
-                       (1 if grid[row + 1][col + 1] == self.get_current_pos() else 0) + \
-                       (1 if grid[row + 2][col + 2] == self.get_current_pos() else 0)
-
-                seq2 = (1 if grid[row + 1][col + 1] == self.get_current_pos() else 0) + \
-                       (1 if grid[row + 2][col + 2] == self.get_current_pos() else 0) + \
-                       (1 if grid[row + 3][col + 3] == self.get_current_pos() else 0)
-
-                if seq1 > longest:
-                    longest = seq1
-
-                if seq2 > longest:
-                    longest = seq2
+        if stage == 'placement':
+            longest = 1
+            for col in range(state.get_num_cols()):
+                for row in range(state.get_num_rows()):
+                    count = 0
+                    for i in range(state.get_num_rows()):
+                        if grid[i][col] == self.get_current_pos():
+                            count += 1
+                            longest += 1
+                    if count > max_count:
+                        max_count = count
+                        longest += 2
+            longest = 2
+        else:
+            longest =2
+        if state.get_acting_player() == 0:
+            longest = state._StymieState__count_acting0 - state._StymieState__count_acting1
+        else:
+            longest = state._StymieState__count_acting1 - state._StymieState__count_acting0
         return longest
 
     """Implementation of minimax search (recursive, with alpha/beta pruning) :param state: the state for which the 
@@ -93,9 +60,9 @@ class MinimaxStymiePlayer(StymiePlayer):
         # first we check if we are in a terminal node (victory, draw or loose)
         if state.is_finished():
             return {
-                Connect4Result.WIN: 40,
-                Connect4Result.LOOSE: -40,
-                Connect4Result.DRAW: 0
+                StymieResult.WIN: 40,
+                StymieResult.LOOSE: -40,
+                StymieResult.DRAW: 0
             }[state.get_result(self.get_current_pos())]
 
         # if we reached the maximum depth, we will return the value of the heuristic
@@ -118,15 +85,24 @@ class MinimaxStymiePlayer(StymiePlayer):
                         break
                     alpha = max(alpha, value)
             else:
-                for action in state.get_possible_actions_minimax():
+                for action in state.get_possible_move():
                     pre_value = value
                     value = max(value, self.minimax(state.sim_play(action), depth - 1, alpha, beta, False))
                     if value > pre_value:
+                        #if isinstance(action, StymieInPlayAction):
                         selected_action = action
                     if value > beta:
                         break
                     alpha = max(alpha, value)
-
+                for action in state.get_possible_add():
+                    pre_value = value
+                    value = max(value, self.minimax(state.sim_play(action), depth - 1, alpha, beta, False))
+                    if value > pre_value:
+                        #if isinstance(action, StymieInPlayAction):
+                        selected_action = action
+                    if value > beta:
+                        break
+                    alpha = max(alpha, value)
             return selected_action if is_initial_node else value
 
         # if it is the opponent's turn

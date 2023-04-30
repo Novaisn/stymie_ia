@@ -242,7 +242,6 @@ class StymieState(State):
             if isinstance(action, StymieInPlayAction):
                 return self.validate_inplay_action(action)
             else:
-                print("AQUI")
                 return False
 
     def is_diagonal_move(self,row_ini, col_ini, row_fim, col_fim):
@@ -337,8 +336,8 @@ class StymieState(State):
         self.__has_winner = self.__check_winner(self.__acting_player)
         # switch to next player
         self.__acting_player = 1 if self.__acting_player == 0 else 0
-        self.display()
-        print(self._stage)
+        #self.display()
+        #print(self._stage)
         self.__turns_count += 1
 
     def __display_cell(self, row, col):
@@ -469,7 +468,7 @@ class StymieState(State):
 
         return pieces
     def get_possible_actions_minimax(self):
-        return self.get_player_pieces() + self.get_possible_move()
+        return self.get_possible_move() +self.get_possible_add()
     def sim_play(self, action):
         new_state = self.clone()
         new_state.play(action)

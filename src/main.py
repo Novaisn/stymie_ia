@@ -39,12 +39,22 @@ def run_simulation(desc: str, simulator: GameSimulator, iterations: int):
 def main():
     print("ESTG IA Games Simulator")
 
-    num_iterations = 1
+    num_iterations = 10
 
     stymie_simulations = [
         {
             "name": "TicTacToe - R VS M",
-            "player1": RandomStymiePlayer("Random"),
+            "player1": GreedyMoveStymiePlayer("greedy"),
+            "player2": MinimaxStymiePlayer("minimax")
+        },
+        {
+            "name": "TicTacToe - R VS M",
+            "player1": GreedyEatStymiePlayer("greedy"),
+            "player2": GreedyMoveStymiePlayer("greedy Move")
+        },
+        {
+            "name": "TicTacToe - R VS M",
+            "player1": GreedyEatStymiePlayer("greedy"),
             "player2": MinimaxStymiePlayer("minimax")
         },
         # {

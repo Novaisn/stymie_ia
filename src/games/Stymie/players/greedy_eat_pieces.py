@@ -7,6 +7,8 @@ from games.Stymie.state import StymieState
 from games.Stymie.action import StymieAddAction
 from games.Stymie.action import StymieMoveAction
 
+from games.Stymie.action import StymiePlacementAction
+
 
 class GreedyEatStymiePlayer(StymiePlayer):
 
@@ -46,7 +48,6 @@ class GreedyEatStymiePlayer(StymiePlayer):
                         best_move = distances[0]
                     else:
                         raise Exception("There is no valid action")
-
         return best_move
 
     ''' Escolhe qual a peça que está mais perto da area objetivo
@@ -87,6 +88,7 @@ class GreedyEatStymiePlayer(StymiePlayer):
     def get_greedy_add(self, state: StymieState) -> Tuple[int, int]:
         grid = state.get_grid()
         max_count = -1
+        getpossibleactions = state.get_possible_add()
         selected_col = None
         selected_row = None
 
@@ -106,9 +108,14 @@ class GreedyEatStymiePlayer(StymiePlayer):
                         selected_row = row
 
         if selected_col is None:
-            raise Exception("There is no valid action")
+            aux = random.choice(getpossibleactions)
+            selected_col = aux.get_col()
+            selected_row = aux.get_row()
+
         if selected_row is None:
-            raise Exception("There is no valid action")
+            aux = random.choice(getpossibleactions)
+            selected_col = aux.get_col()
+            selected_row = aux.get_row()
 
         return selected_col, selected_row
 
@@ -118,7 +125,7 @@ class GreedyEatStymiePlayer(StymiePlayer):
 
         if stage == "placement":
             add_move = self.get_greedy_add(state)
-            return StymieAddAction(add_move[0], add_move[1])
+            return StymiePlacementAction(add_move[0], add_move[1])
 
         else:
             if canplace:

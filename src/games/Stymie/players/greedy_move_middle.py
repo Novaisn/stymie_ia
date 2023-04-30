@@ -7,6 +7,8 @@ from games.Stymie.state import StymieState
 from games.Stymie.action import StymieAddAction
 from games.Stymie.action import StymieMoveAction
 
+from games.Stymie.action import StymiePlacementAction
+
 
 class GreedyMoveStymiePlayer(StymiePlayer):
 
@@ -67,12 +69,13 @@ class GreedyMoveStymiePlayer(StymiePlayer):
     Retorna um tuplo com a coluna e linha selecionada'''
     def get_greedy_add(self, state: StymieState) -> Tuple[int, int]:
         grid = state.get_grid()
+        getpossibleactions = state.get_possible_add()
         max_count = -1
         selected_col = None
         selected_row = None
         for col in range(state.get_num_cols()):
             for row in range(state.get_num_rows() - 1, -1, -1):
-                if state.validate_action(StymieAddAction(col, row)):
+                if state.validate_action(StymiePlacementAction(col, row)):
                     count = 0
                     for i in range(state.get_num_rows()):
                         if grid[i][col] == self.get_current_pos():
@@ -86,9 +89,14 @@ class GreedyMoveStymiePlayer(StymiePlayer):
                         selected_row = row
 
         if selected_col is None:
-            raise Exception("There is no valid action")
+            aux = random.choice(getpossibleactions)
+            selected_col = aux.get_col()
+            selected_row = aux.get_row()
+
         if selected_row is None:
-            raise Exception("There is no valid action")
+            aux = random.choice(getpossibleactions)
+            selected_col = aux.get_col()
+            selected_row = aux.get_row()
 
         return selected_col, selected_row
 
@@ -98,7 +106,7 @@ class GreedyMoveStymiePlayer(StymiePlayer):
 
         if stage == "placement":
             add_move = self.get_greedy_add(state)
-            return StymieAddAction(add_move[0], add_move[1])
+            return StymiePlacementAction(add_move[0], add_move[1])
 
         else:
             if canplace:
