@@ -21,7 +21,7 @@ class MinimaxStymiePlayer(StymiePlayer):
     This heuristic will simply count the maximum number of consecutive pieces that the player has
     It's not a great heuristic as it doesn't take into consideration a defensive approach
     '''
-
+    #Heuristica como no greedy no minimax a heuristica serve para ver quais as melhores jogadas, a essas jogadas dá um valor mais alto
     def __heuristic(self, state: StymieState):
         grid = state.get_grid()
         stage = state._stage
@@ -71,6 +71,7 @@ class MinimaxStymiePlayer(StymiePlayer):
     to optimize the search :param is_initial_node: if true, the function will return the action with max ev, 
     otherwise it return the max ev (ev = expected value) """
 
+    # A função minimax vai pegar em todas as jogadas possiveis e chamar a função heuristica para ver a que tem pontuação mais alta
     def minimax(self, state: StymieState, depth: int, alpha: int = -math.inf, beta: int = math.inf,
                 is_initial_node: bool = True):
         # first we check if we are in a terminal node (victory, draw or loose)
@@ -111,6 +112,7 @@ class MinimaxStymiePlayer(StymiePlayer):
                 beta = min(beta, value)
             return value
 
+    # o dois que é passado para a função minimax é o nº de jogadas antecipadas
     def get_action(self, state: StymieState):
         return self.minimax(state, 2)
 
