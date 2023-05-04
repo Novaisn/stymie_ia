@@ -43,12 +43,26 @@ class MinimaxStymiePlayer(StymiePlayer):
                         longest += 2
             longest = 2
         else:
-            longest =2
-
-        if state.get_acting_player() == 1:
-            longest = state._StymieState__count_acting0 - state._StymieState__count_acting1
-        else:
-            longest = state._StymieState__count_acting1 - state._StymieState__count_acting0
+            if state._canpalce:
+                grid = state.get_grid()
+                aux1 = 0
+                aux0 = 0
+                for row in range(state.get_num_rows()):
+                    for col in range(state.get_num_cols()):
+                        g = grid[row][col]
+                        if g == 0:
+                            aux0 += 1
+                        elif g == 1:
+                            aux1 += 1
+                if self.get_current_pos() == 1:
+                    longest = aux1 - aux0
+                else:
+                    longest = aux0 - aux1
+            else:
+                if self.get_current_pos() == 1:
+                    longest = state._StymieState__count_acting0 - state._StymieState__count_acting1
+                else:
+                    longest = state._StymieState__count_acting1 - state._StymieState__count_acting0
 
         return longest
 
@@ -76,41 +90,21 @@ class MinimaxStymiePlayer(StymiePlayer):
             # very small integer
             value = -math.inf
             selected_action = None
-
-            if state._stage == 'placement':
-                for action in state.get_possible_actions():
-                    pre_value = value
-                    value = max(value, self.minimax(state.sim_play(action), depth - 1, alpha, beta, False))
-                    if value > pre_value:
-                        selected_action = action
-                    if value > beta:
-                        break
-                    alpha = max(alpha, value)
-            else:
-                for action in state.get_possible_move():
-                    pre_value = value
-                    value = max(value, self.minimax(state.sim_play(action), depth - 1, alpha, beta, False))
-                    if value > pre_value:
-                        #if isinstance(action, StymieInPlayAction):
-                        selected_action = action
-                    if value > beta:
-                        break
-                    alpha = max(alpha, value)
-                for action in state.get_possible_add():
-                    pre_value = value
-                    value = max(value, self.minimax(state.sim_play(action), depth - 1, alpha, beta, False))
-                    if value > pre_value:
-                        #if isinstance(action, StymieInPlayAction):
-                        selected_action = action
-                    if value > beta:
-                        break
-                    alpha = max(alpha, value)
+            for action in state.get_possible_actions_minimax():
+                pre_value = value
+                value = max(value, self.minimax(state.sim_play(action), depth - 1, alpha, beta, False))
+                if value > pre_value:
+                    #if isinstance(action, StymieInPlayAction):
+                    selected_action = action
+                if value > beta:
+                    break
+                alpha = max(alpha, value)
             return selected_action if is_initial_node else value
 
         # if it is the opponent's turn
         else:
             value = math.inf
-            for action in state.get_possible_actions():
+            for action in state.get_possible_actions_minimax():
                 value = min(value, self.minimax(state.sim_play(action), depth - 1, alpha, beta, False))
                 if value < alpha:
                     break
@@ -118,7 +112,7 @@ class MinimaxStymiePlayer(StymiePlayer):
             return value
 
     def get_action(self, state: StymieState):
-        return self.minimax(state, 1)
+        return self.minimax(state, 2)
 
     def event_action(self, pos: int, action, new_state: State):
         # ignore

@@ -182,11 +182,11 @@ class StymieState(State):
         rowini = action.get_rowIni()
         colfim = action.get_colFim()
         rowfim = action.get_rowFim()
-        aux = "a"
         if self.__grid[rowfim][colfim] != StymieState.EMPTY_CELL:
             return False
         if self.__grid[rowini][colini] != self.__acting_player:
-            if self.__grid[rowini][colini] != 2 and self.__acting_player == 0 or self.__grid[rowini][colini] != 3 and self.__acting_player == 1:
+            if self.__grid[rowini][colini] != 2 and self.__acting_player == 0 or self.__grid[rowini][colini] != 3 \
+                    and self.__acting_player == 1:
                 return False
         for i in range(-1, 2):
             for j in range(-1, 2):
@@ -198,31 +198,6 @@ class StymieState(State):
                             return True
         if abs(rowfim - rowini) > 1 or abs(colfim - colini) > 1:
             return False
-
-        # if rowini - 1 >= 0 and colini - 1 >= 0:
-        #     if [rowfim][colfim] == [rowini - 1][colini -1]:
-        #         aux = True
-        # if rowini - 1 >= 0:
-        #     if [rowfim][colfim] == [rowini -1][colini]:
-        #         aux = True
-        # if colini - 1 >= 0:
-        #     if [rowfim][colfim] == [rowini][colini -1]:
-        #         aux = True
-        # if rowini +1 < self.__num_rows and colini +1 < self.__num_cols:
-        #     if [rowfim][colfim] == [rowini+1][colini+1]:
-        #         aux = True
-        # if rowini + 1 < self.__num_rows:
-        #     if [rowfim][colfim] == [rowini+1][colini]:
-        #         aux = True
-        # if colini + 1 < self.__num_rows:
-        #     if [rowfim][colfim] == [rowini][colini +1]:
-        #         aux = True
-        # if rowini -1 >= 0 and colini +1 < self.__num_rows:
-        #     if [rowfim][colfim] == [rowini -1][colini+1]:
-        #         aux = True
-        # if rowini +1 < self.__num_rows and colini-1 >= 0:
-        #     if [rowfim][colfim] == [rowini+1][colini-1]:
-        #         aux = True
 
         return True
 
@@ -335,8 +310,10 @@ class StymieState(State):
         # determine if there is a winner
         self.__has_winner = self.__check_winner(self.__acting_player)
         # switch to next player
+
         self.__acting_player = 1 if self.__acting_player == 0 else 0
         #self.display()
+
         #print(self._stage)
         self.__turns_count += 1
 
@@ -345,11 +322,11 @@ class StymieState(State):
         if cell_value == 0:
             print('\033[33mX\033[0m', end="")
         elif cell_value == 1:
-            print('\033[37;1mO\033[0m', end="")  # prata
+            print('\033[37;1mO\033[0m', end="")
         elif cell_value == 2:
-            print('\033[33;1mA\033[0m', end="")  # amarelo
+            print('\033[33;1mA\033[0m', end="")
         elif cell_value == 3:
-            print('\033[37;1mA\033[0m', end="")  # prata
+            print('\033[37;1mA\033[0m', end="")
         else:
             print({
                       StymieState.EMPTY_CELL: ' '
@@ -392,7 +369,7 @@ class StymieState(State):
         return self.__turns_count > (self.__num_cols * self.__num_rows)
 
     def is_finished(self) -> bool:
-        return self.__has_winner #or self.__is_full()
+        return self.__has_winner
 
     def get_acting_player(self) -> int:
         return self.__acting_player
@@ -468,7 +445,10 @@ class StymieState(State):
 
         return pieces
     def get_possible_actions_minimax(self):
-        return self.get_possible_move() +self.get_possible_add()
+        if self._stage == 'placement':
+            return self.get_possible_actions()
+        else:
+            return self.get_possible_move() +self.get_possible_add()
     def sim_play(self, action):
         new_state = self.clone()
         new_state.play(action)

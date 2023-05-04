@@ -1,3 +1,4 @@
+from datetime import datetime
 
 from games.game_simulator import GameSimulator
 from games.poker.players.always_bet import AlwaysBetKuhnPokerPlayer
@@ -34,7 +35,6 @@ def run_simulation(desc: str, simulator: GameSimulator, iterations: int):
 
     print("Results for the game:")
     simulator.print_stats()
-
 
 def main():
     print("ESTG IA Games Simulator")
