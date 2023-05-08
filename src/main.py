@@ -55,7 +55,7 @@ def main():
 
         while option1 is None:
             try:
-                option1 = int(input("Digite o número da primeira opção: "))
+                option1 = int(input("Digite o número do primeiro jogador: "))
                 if option1 == 0:
                     sys.exit()
                 if option1 not in [1, 2, 3, 4, 5]:
@@ -66,7 +66,7 @@ def main():
 
         while option2 is None:
             try:
-                option2 = int(input("Digite o número da segunda opção: "))
+                option2 = int(input("Digite o número do segundo jogador: "))
                 if option2 not in [1, 2, 3, 4, 5]:
                     print("Opção inválida. Por favor, escolha um número de 1 a 5.")
                     option2 = None
